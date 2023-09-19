@@ -7,25 +7,40 @@ from selenium.webdriver.common.action_chains import ActionChains
 from operations import Operations
 
 
-class PlumberForm(Operations):
+class CafeForm(Operations):
     def __init__(self, 
                  trade: str,
                  own_premises: str,
                  assumptions: str,
-                 employers_liability: bool,
-                 business_equipment: bool,
-                 cover_amount: str,
+                 content_cover: str | None,
+                 stock_cover: str | None,
+                 temperature_ctrl_stock: str | None,
+                 transit_stock: str | None,
+                 building_cover: str | None,
+                 employer_liability: bool,
+                 electronic_equipment: str | None,
+                 alcohol_loss: str | None,
+
+
+
                  atm: str,
                  claim: str,
                  claim_list: list,
                  ):
         self.trade = trade
-        self.claim = claim
-        self.assumptions = assumptions.capitalize()
-        self.employers_liability = employers_liability
-        self.business_equipment = business_equipment
-        self.cover_amount = cover_amount
         self.own_premises = own_premises.capitalize()
+        self.assumptions = assumptions.capitalize()
+        self.content_cover = content_cover
+        self.stock_cover = stock_cover
+        self.temperature_ctrl_stock = temperature_ctrl_stock
+        self.transit_stock = transit_stock
+        self.building_cover = building_cover
+        self.employer_liability = employer_liability
+        self.electronic_equipment = electronic_equipment
+        self.alcohol_loss = alcohol_loss
+
+
+
         self.atm = atm.capitalize()
         self.claim = claim.capitalize()
         self.claim_list = claim_list
@@ -39,14 +54,40 @@ class PlumberForm(Operations):
         self.select_from_dropdown(self.trade, dropdown_options)
         self.click_element(f'//*[@id="fixedBusinessPremises{self.own_premises}"]')
         self.click_element(f'//*[@id="coverAssumptions{self.assumptions}-button"]')
-        if self.employers_liability:
-            self.click_element(f'//*[@ng-reflect-name="employersLiabilitySelection"]')
-        sleep(0.2)
-        if self.business_equipment:
-            self.click_element('//*[@ng-reflect-name="toolsStockEquipmentSelection"]')
-            self.driver.execute_script("window.scrollBy(0,300);")
-            sleep(0.3)
-            self.click_element(f'//*[@ng-reflect-name="toolStockCoverAmount{self.cover_amount}"]')
+
+        if self.content_cover:
+            self.click_element('//*[@ng-reflect-name="contentsCoverSelection"]')
+            self.input_text('//*[@ng-reflect-name="contentsCoverAmount"]', self.content_cover)
+
+        if self.stock_cover:
+            self.click_element('//*[@ng-reflect-name="stockCoverSelection"]')
+            self.input_text('//*[@id="stockCoverAmount"]', self.stock_cover)
+
+        if self.temperature_ctrl_stock:
+            self.click_element('//*[@ng-reflect-name="temperatureControlledCoverSele"]')
+            self.input_text('//*[@ng-reflect-name="temperatureControlledCoverAmou"]', self.temperature_ctrl_stock)
+        
+        if self.transit_stock:
+            self.click_element('//*[@ng-reflect-name="stockInTransitSelection"]')
+            sleep(0.1)
+            self.click_element(f'//*[@ng-reflect-name="stockInTransitCoverAmount{self.transit_stock}"]')
+        
+        if self.building_cover:
+            self.click_element('//*[@ng-reflect-name="buildingCoverSelection"]')
+            self.input_text('//*[@id="buildingCoverAmount"]', self.temperature_ctrl_stock)
+        
+        if self.employer_liability:
+            self.click_element('//*[@ng-reflect-name="employersLiabilitySelection"]')
+
+        if self.electronic_equipment:
+            self.click_element('//*[@ng-reflect-name="electronicEquipmentCoverSelect"]')
+            self.input_text('//*[@id="electronicEquipmentCoverAmount"]', self.electronic_equipment)
+        
+        if self.alcohol_loss:
+            self.click_element('//*[@ng-reflect-name="lossOfAlcoholSelection"]')
+            self.click_element(f'//*[@id="lossOfAlcoholCoverAmount{self.alcohol_loss}"]')
+            
+        
         self.click_element('//*[@id="continueButton"]')
 
 
@@ -84,7 +125,7 @@ class PlumberForm(Operations):
         self.setup()
         self.fill_page1()
         sleep(0.4)
-        self.fill_page2()
+        #self.fill_page2()
         sleep(1000)
 
 #for claim type property and liability have fields (type, month, year, main_cause, amount_of_loss, postcode) and for claim type professionalIndemnity have fields (month, year, details, amount_of_loss)
@@ -108,5 +149,20 @@ claim_list = [
     },
 ]
 
-claims = PlumberForm('Plumber', 'no', 'yes', True, True, '2500', 'yes', 'yes', claim_list)
-claims.fill_form()
+form = CafeForm(
+    trade = 'Cafe',
+    own_premises = 'yes',
+    assumptions = 'yes',
+    content_cover = '2000',
+    stock_cover = '2000',
+    temperature_ctrl_stock = '2000',
+    transit_stock = '2500',
+    building_cover= '2000',
+    employer_liability = True,
+    electronic_equipment = '2000',
+    alcohol_loss = '2500',
+    atm = 'yes',
+    claim = 'no',
+    claim_list = {},
+)
+form.fill_form()

@@ -22,7 +22,11 @@ class Operations:
         el = self.driver.find_element(By.XPATH, xpath)
         el.location_once_scrolled_into_view
         sleep(0.1)
-        el.click()
+        try:
+            el.click()
+        except:
+            sleep(0.1)
+            el.click()
 
 
     def input_text(self, xpath, text):
@@ -48,6 +52,5 @@ class Operations:
             if iter != 0 and dropdown_el.text == option:
                 num = iter
                 break
-        print('num:', num)
         self.down_arrow(num)
         self.enter()

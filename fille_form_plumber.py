@@ -13,8 +13,7 @@ class PlumberForm(Operations):
                  own_premises: str,
                  assumptions: str,
                  employers_liability: bool,
-                 business_equipment: bool,
-                 cover_amount: str,
+                 business_equipment: str | None,
                  atm: str,
                  claim: str,
                  claim_list: list,
@@ -24,7 +23,6 @@ class PlumberForm(Operations):
         self.assumptions = assumptions.capitalize()
         self.employers_liability = employers_liability
         self.business_equipment = business_equipment
-        self.cover_amount = cover_amount
         self.own_premises = own_premises.capitalize()
         self.atm = atm.capitalize()
         self.claim = claim.capitalize()
@@ -46,7 +44,7 @@ class PlumberForm(Operations):
             self.click_element('//*[@ng-reflect-name="toolsStockEquipmentSelection"]')
             self.driver.execute_script("window.scrollBy(0,300);")
             sleep(0.3)
-            self.click_element(f'//*[@ng-reflect-name="toolStockCoverAmount{self.cover_amount}"]')
+            self.click_element(f'//*[@ng-reflect-name="toolStockCoverAmount{self.business_equipment}"]')
         self.click_element('//*[@id="continueButton"]')
 
 
@@ -108,5 +106,5 @@ claim_list = [
     },
 ]
 
-claims = PlumberForm('Plumber', 'no', 'yes', True, True, '2500', 'yes', 'yes', claim_list)
+claims = PlumberForm('Plumber', 'no', 'yes', True, '2500', 'yes', 'yes', claim_list)
 claims.fill_form()
